@@ -1,6 +1,7 @@
 APP_NAME=thestral
 MAIN_FILE=./cmd/main.go
-PORT=8080
+PORT=7007
+ADMIN_PORT=7008
 
 .PHONY: start run build clean test docker-build docker-run
 
@@ -26,7 +27,7 @@ docker-build:
 docker-run:
 	@echo "\n---Docker Run Image---\n"
 	@docker run \
-		-e PORT=$(PORT)\
-		-p 8080:$(PORT) --rm\
+		-p $(PORT):7007 --rm\
+		-p $(ADMIN_PORT):7008 --rm\
 		--name $(APP_NAME)-container\
 		$(APP_NAME)

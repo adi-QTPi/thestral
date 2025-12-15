@@ -1,4 +1,4 @@
-package util
+package utils
 
 import (
 	"github.com/go-chi/chi/v5"

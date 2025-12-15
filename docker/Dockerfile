@@ -1,6 +1,6 @@
 FROM golang:1.25-alpine AS builder
 
-ARG APP_NAME = thestral
+ARG APP_NAME=thestral
 
 RUN apk add --no-cache git make
 
@@ -19,15 +19,17 @@ RUN make build
 # Running stage
 FROM alpine:latest
 
-ARG APP_NAME = thestral
+ARG APP_NAME=thestral
 
 RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 
 COPY --from=builder /app/bin/${APP_NAME} ./binary
 
-#to be supplied in run command , backup value 8080,
-ENV PORT=8080 
-EXPOSE $PORT
+ENV PORT=7007
+ENV ADMIN_PORT=7008
+
+EXPOSE 7007
+EXPOSE 7008
 
 CMD ["./binary"]
