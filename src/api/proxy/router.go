@@ -21,7 +21,7 @@ func Router(e *model.Engine) *chi.Mux {
 }
 
 func Serve(router *chi.Mux) {
-	publicIp := "0.0.0.0:7007"
+	publicIp := "0.0.0.0:80"
 	log.Printf("Public Proxy listening on %s", publicIp)
 	if err := http.ListenAndServe(publicIp, router); err != nil {
 		log.Fatalf("normal server stopped: %v", err)

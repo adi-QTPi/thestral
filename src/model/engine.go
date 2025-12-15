@@ -47,8 +47,14 @@ func (e *Engine) AddRoute(route *types.ProxyRoute) error {
 	return nil
 }
 
-func (e *Engine) DeleteRoute(route *types.ProxyRoute) {
-
+func (e *Engine) DeleteRoute(source string) error {
+	e.mutex.Lock()
+	defer e.mutex.Unlock()
+	if _, exists := e.Routes[source]; !exists {
+		return fmt.Errorf("no record found for this source host")
+	}
+	delete(e.Routes, source)
+	return nil
 }
 
 func (e *Engine) GetProxy(target string) (*types.ProxyRoute, error) {
@@ -58,6 +64,10 @@ func (e *Engine) GetProxy(target string) (*types.ProxyRoute, error) {
 
 	if !exists {
 		return nil, fmt.Errorf("unable to forward your request")
+	}
+
+	if !proxy.Active {
+		return nil, fmt.Errorf("site under maintenance")
 	}
 
 	return proxy, nil

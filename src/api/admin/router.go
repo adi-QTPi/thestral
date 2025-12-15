@@ -17,7 +17,7 @@ func Router(e *model.Engine) *chi.Mux {
 
 	router.Get("/ping", ac.Ping)
 	router.Post("/add", ac.AddRouteHandler)
-	router.Post("/delete", ac.DeleteRouteHandler)
+	router.Delete("/delete", ac.DeleteRouteHandler)
 
 	return router
 }
