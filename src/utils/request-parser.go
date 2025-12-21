@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/adi-QTPi/thestral/src/types"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -15,12 +16,18 @@ func Validate(w http.ResponseWriter, r *http.Request, v interface{}) bool {
 	decoder.DisallowUnknownFields()
 
 	if err := decoder.Decode(v); err != nil {
-		http.Error(w, "Invalid JSON format: "+err.Error(), http.StatusBadRequest)
+		JSONResponse(w, http.StatusBadRequest, &types.StdResponse{
+			Success:     false,
+			Description: fmt.Sprintf("Invalid JSON format: %v", err.Error()),
+		})
 		return false
 	}
 
 	if err := validate.Struct(v); err != nil {
-		http.Error(w, fmt.Sprintf("Validation failed: %s", err.Error()), http.StatusBadRequest)
+		JSONResponse(w, http.StatusBadRequest, &types.StdResponse{
+			Success:     false,
+			Description: fmt.Sprintf("Validation failed: %s", err.Error()),
+		})
 		return false
 	}
 

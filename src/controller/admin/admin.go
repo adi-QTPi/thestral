@@ -29,9 +29,19 @@ func (ac *AdminController) AddRouteHandler(w http.ResponseWriter, r *http.Reques
 		ID:          uuid.NewString(),
 	}
 
-	ac.Engine.AddRoute(n)
+	err := ac.Engine.AddRoute(n)
+	if err != nil {
+		utils.JSONResponse(w, http.StatusBadRequest, &types.StdResponse{
+			Success:     false,
+			Description: fmt.Sprintf("error adding : %v", err),
+		})
+		return
+	}
 
-	fmt.Fprintf(w, "added, src %v, dest %v", n.Source, n.Destination)
+	utils.JSONResponse(w, http.StatusOK, &types.StdResponse{
+		Success:     true,
+		Description: fmt.Sprintf("[src : %v] <--> [dest : %v]", n.Source, n.Destination),
+	})
 }
 
 func (ac *AdminController) DeleteRouteHandler(w http.ResponseWriter, r *http.Request) {
@@ -40,5 +50,9 @@ func (ac *AdminController) DeleteRouteHandler(w http.ResponseWriter, r *http.Req
 		return //http error sent.
 	}
 	ac.Engine.DeleteRoute(req.Host)
-	fmt.Fprint(w, "delete service called")
+
+	utils.JSONResponse(w, http.StatusOK, &types.StdResponse{
+		Success:     true,
+		Description: fmt.Sprintf("host deleted : %v", req.Host),
+	})
 }

@@ -2,22 +2,32 @@ package model
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"sync"
 
+	"github.com/adi-QTPi/thestral/src/config"
 	"github.com/adi-QTPi/thestral/src/types"
 )
 
 type Engine struct {
 	Routes map[string]*types.ProxyRoute
+	Store  types.Storage
 	mutex  sync.RWMutex
 }
 
-func NewEngine() *Engine {
+func NewEngine(cfg *config.Env) *Engine {
+
+	client, err := NewRedisClient(cfg.REDIS_HOST, cfg.REDIS_PORT, cfg.REDIS_PASSWORD)
+	if err != nil {
+		log.Fatal("redis connection issue : ", err)
+	}
+
 	return &Engine{
 		Routes: make(map[string]*types.ProxyRoute),
+		Store:  client,
 	}
 }
 
@@ -28,6 +38,11 @@ func (e *Engine) AddRoute(route *types.ProxyRoute) error {
 	targetURL, err := url.Parse(route.Destination)
 	if err != nil {
 		return fmt.Errorf("error adding the url : %v", err)
+	}
+
+	_, ok := e.Routes[route.Source]
+	if ok {
+		return fmt.Errorf("the source is already bound")
 	}
 
 	proxy := httputil.NewSingleHostReverseProxy(targetURL)

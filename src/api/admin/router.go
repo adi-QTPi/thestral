@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/adi-QTPi/thestral/src/config"
 	controller "github.com/adi-QTPi/thestral/src/controller/admin"
 	"github.com/adi-QTPi/thestral/src/model"
 	"github.com/adi-QTPi/thestral/src/utils"
@@ -22,10 +23,12 @@ func Router(e *model.Engine) *chi.Mux {
 	return router
 }
 
-func Serve(router *chi.Mux) {
-	secureIp := "100.114.106.39:7008"
-	log.Printf("Admin listening on %s", secureIp)
-	if err := http.ListenAndServe(secureIp, router); err != nil {
+func Serve(router *chi.Mux, cfg *config.Env) {
+	// secureIp := "100.114.106.39:7008"
+	// secureIp := "100.113.160.66:7007" //azkaban
+	uri := cfg.ADMIN_BIND
+	log.Printf("Admin listening on %s", uri)
+	if err := http.ListenAndServe(uri, router); err != nil {
 		log.Fatalf("Admin server stopped: %v", err)
 	}
 }

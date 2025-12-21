@@ -24,12 +24,6 @@ ARG APP_NAME=thestral
 RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 
-COPY --from=builder /app/bin/${APP_NAME} ./binary
+COPY --from=builder /app/bin/${APP_NAME} ./thestral
 
-ENV PORT=7007
-ENV ADMIN_PORT=7008
-
-EXPOSE 7007
-EXPOSE 7008
-
-CMD ["./binary"]
+CMD ["./thestral"]

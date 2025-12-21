@@ -6,5 +6,5 @@ type AddRouteRequest struct {
 }
 
 type HostName struct {
-	Host string `json:"source" validate:"required,hostname_rfc1123"`
+	Host string `json:"host" validate:"required,hostname_rfc1123"`
 }
