@@ -1,6 +1,6 @@
 package types
 
 type Storage interface {
-	Add()
-	GetAll()
+	Add(*ProxyRoute) error
+	GetAll() (map[string]*ProxyRoute, error)
 }

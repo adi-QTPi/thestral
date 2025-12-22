@@ -5,7 +5,7 @@ ADMIN_PORT?=7008
 SECURE_IP?=100.113.160.66
 PLATFORM?=linux/amd64
 
-.PHONY: start run build clean test docker-build docker-run
+.PHONY: start run build clean test docker-build docker-run redis
 
 start:
 	@echo "\n---Running Live Reload---\n"
@@ -29,3 +29,7 @@ docker-build:
 docker-run:
 	@echo "\n---Docker Run Image (Host Mode)---\n"
 	@docker run -d --network host -e PORT=$(PORT) -e ADMIN_PORT=$(ADMIN_PORT) -e SECURE_IP=$(SECURE_IP) --rm --name $(APP_NAME)-container $(APP_NAME)
+redis:
+	@echo "\n---Spinning up new Redis Container---\n"
+	@chmod +x ./redis/container.sh
+	@./redis/container.sh

@@ -31,22 +31,12 @@ func NewEngine(cfg *config.Env) *Engine {
 	}
 }
 
-func (e *Engine) AddRoute(route *types.ProxyRoute) error {
-	e.mutex.Lock()
-	defer e.mutex.Unlock()
-
-	targetURL, err := url.Parse(route.Destination)
+func (e *Engine) createProxy(destination string) (*httputil.ReverseProxy, error) {
+	targetURL, err := url.Parse(destination)
 	if err != nil {
-		return fmt.Errorf("error adding the url : %v", err)
+		return nil, err
 	}
-
-	_, ok := e.Routes[route.Source]
-	if ok {
-		return fmt.Errorf("the source is already bound")
-	}
-
 	proxy := httputil.NewSingleHostReverseProxy(targetURL)
-
 	originalDirector := proxy.Director
 	proxy.Director = func(req *http.Request) {
 		originalDirector(req)
@@ -54,10 +44,51 @@ func (e *Engine) AddRoute(route *types.ProxyRoute) error {
 		req.Header.Set("X-Forwarded-Proto", req.URL.Scheme)
 		req.Host = targetURL.Host
 	}
+	return proxy, nil
+}
 
+func (e *Engine) LoadRedis() error {
+	data, err := e.Store.GetAll()
+	if err != nil {
+		return fmt.Errorf("error loading from redis : %v", err)
+	}
+
+	for _, proxyObj := range data {
+		proxy, err := e.createProxy(proxyObj.Destination)
+		if err != nil {
+			return fmt.Errorf("error creating proxy : %v", err)
+		}
+		proxyObj.Proxy = proxy
+	}
+
+	e.mutex.Lock()
+	defer e.mutex.Unlock()
+
+	e.Routes = data
+	fmt.Println("Successfully loaded from redis")
+	return nil
+}
+
+func (e *Engine) AddRoute(route *types.ProxyRoute) error {
+	proxy, err := e.createProxy(route.Destination)
+	if err != nil {
+		return fmt.Errorf("error creating proxy : %v", err)
+	}
+
+	e.mutex.Lock()
+	_, ok := e.Routes[route.Source]
+	if ok {
+		e.mutex.Unlock()
+		return fmt.Errorf("the source is already bound")
+	}
 	route.Proxy = proxy
-
 	e.Routes[route.Source] = route
+	e.mutex.Unlock()
+
+	if err := e.Store.Add(route); err != nil {
+		e.DeleteRoute(route.Source)
+		return fmt.Errorf("unable to insert in redis : %v", err)
+	}
 
 	return nil
 }

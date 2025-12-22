@@ -7,7 +7,7 @@ thestral
 
 # --- Air / Live Reload ---
 # You mentioned air-temp, and standard Air uses tmp
-/air-temp/
+/air-tmp/
 /tmp/
 
 # --- Environment Variables ---
