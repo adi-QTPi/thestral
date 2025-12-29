@@ -1,9 +1,11 @@
-APP_NAME?=thestral
-MAIN_FILE?=./cmd/main.go
-PORT?=80
-ADMIN_PORT?=7008
-SECURE_IP?=100.113.160.66
-PLATFORM?=linux/amd64
+APP_NAME=thestral
+MAIN_FILE=./cmd/main.go
+PROXY_BIND?=0.0.0.0:80
+ADMIN_BIND=100.113.160.66:7007
+REDIS_PORT?=6381
+REDIS_HOST?=azkaban
+REDIS_PASSWORD?=super-secret-string
+PLATFORM=linux/amd64
 
 .PHONY: start run build clean test docker-build docker-run redis
 
@@ -28,7 +30,7 @@ docker-build:
 	@docker buildx build --platform $(PLATFORM) -f docker/Dockerfile --build-arg APP_NAME=$(APP_NAME) -t $(APP_NAME) .
 docker-run:
 	@echo "\n---Docker Run Image (Host Mode)---\n"
-	@docker run -d --network host -e PORT=$(PORT) -e ADMIN_PORT=$(ADMIN_PORT) -e SECURE_IP=$(SECURE_IP) --rm --name $(APP_NAME)-container $(APP_NAME)
+	@docker run -d --network host -e ADMIN_BIND=$(ADMIN_BIND) -e PROXY_BIND=$(PROXY_BIND) -e REDIS_PORT=$(REDIS_PORT) -e REDIS_HOST=$(REDIS_HOST) -e REDIS_PASSWORD=$(REDIS_PASSWORD) --rm --name $(APP_NAME)-container $(APP_NAME)
 redis:
 	@echo "\n---Spinning up new Redis Container---\n"
 	@chmod +x ./redis/container.sh
