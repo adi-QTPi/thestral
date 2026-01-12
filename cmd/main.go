@@ -1,26 +1,40 @@
 package main
 
 import (
-	"log"
+	"fmt"
 
-	"github.com/adi-QTPi/thestral/src/api/admin"
-	"github.com/adi-QTPi/thestral/src/api/proxy"
-	"github.com/adi-QTPi/thestral/src/config"
-	"github.com/adi-QTPi/thestral/src/model"
+	admin "github.com/adi-QTPi/thestral/internal/admin/http"
+	"github.com/adi-QTPi/thestral/internal/config"
+	"github.com/adi-QTPi/thestral/internal/listener"
+	"github.com/adi-QTPi/thestral/internal/proxy"
+	public "github.com/adi-QTPi/thestral/internal/proxy/http"
+	"github.com/adi-QTPi/thestral/internal/store"
 )
 
 func main() {
-	cfg := config.LoadConfig()
+	initServices()
+}
 
-	e := model.NewEngine(cfg)
-
-	if err := e.LoadRedis(); err != nil {
-		log.Fatalf("redis loading error : %v", err)
+func initServices() {
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		fmt.Printf("Error initialising config : %v", err)
+		return
 	}
 
-	adminRouter := admin.Router(e)
-	proxyRouter := proxy.Router(e)
+	p := proxy.NewService()
 
-	go admin.Serve(adminRouter, cfg)
-	proxy.Serve(proxyRouter, cfg)
+	s, err := store.NewService(cfg)
+	if err != nil {
+		fmt.Printf("Error initialising db store 2: %v", err)
+		return
+	}
+
+	l := listener.NewService(cfg, p, s)
+
+	l.Load()
+	l.Run()
+
+	go admin.InitServer(cfg, s)
+	public.InitServer(cfg, p)
 }
