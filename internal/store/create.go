@@ -11,7 +11,7 @@ import (
 )
 
 // Creates a new route along with notifying the listening channels, returning any error leads to rollback.
-func (s *service) Create(input dto.RouteInput) error {
+func (s *service) Create(input dto.CreateRouteInput) error {
 
 	// [TODO] some kind of host and target validation (ping maybe?)
 
@@ -28,14 +28,14 @@ func (s *service) Create(input dto.RouteInput) error {
 		payload := &model.EventPayload{
 			Action: model.EventCreate,
 			ID:     newRoute.ID,
+			Host:   newRoute.Host,
 		}
 		data, err := json.Marshal(payload)
 		if err != nil {
-			return fmt.Errorf("failed to marshal notification payload: %w", err)
+			return fmt.Errorf("CREATE notif payload marshal : %w", err)
 		}
 
-		query := "SELECT pg_notify(?, ?)"
-		if err := tx.Exec(query, model.ListenerName, string(data)).Error; err != nil {
+		if err := tx.Exec(NotifyQuery, model.ListenerName, string(data)).Error; err != nil {
 			return fmt.Errorf("failed to emit notification: %w", err)
 		}
 

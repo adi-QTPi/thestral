@@ -21,7 +21,7 @@ func (s *service) handleCreateEvent(payload *model.EventPayload) {
 	if err := s.proxy.Create(result); err != nil {
 		fmt.Printf("error adding route : %v", err)
 	}
-
+	fmt.Println("success : route creation")
 }
 
 func (s *service) handleUpdateEvent(payload *model.EventPayload) {
@@ -29,5 +29,6 @@ func (s *service) handleUpdateEvent(payload *model.EventPayload) {
 }
 
 func (s *service) handleDeleteEvent(payload *model.EventPayload) {
-	// [TODO] registry op after deletion in db
+	s.proxy.Delete(payload.Host)
+	fmt.Println("success : route deletion")
 }

@@ -26,4 +26,5 @@ type Route struct {
 type EventPayload struct {
 	Action action `json:"action"`
 	ID     uint   `json:"id"`
+	Host   string `json:"host"`
 }

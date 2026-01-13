@@ -25,6 +25,13 @@ func (s *service) Create(r *model.Route) error {
 	return nil
 }
 
+func (s *service) Delete(host string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	delete(s.registry, host)
+}
+
 func (s *service) GetHandler(host string) (*route.Handler, error) {
 	s.mu.RLock()
 	handler, exists := s.registry[host]

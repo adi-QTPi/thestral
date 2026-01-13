@@ -14,10 +14,13 @@ import (
 )
 
 type Service interface {
-	Create(input dto.RouteInput) error
+	Create(input dto.CreateRouteInput) error
+	Delete(input dto.DeleteRouteInput) error
 	FindOneRoute(filter *model.Route) (*model.Route, error)
 	FindManyRoutes(filter *model.Route) ([]model.Route, error)
 }
+
+const NotifyQuery = "SELECT pg_notify(?, ?)"
 
 type service struct {
 	cfg *config.Env
