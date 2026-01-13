@@ -27,8 +27,8 @@ func findOne[T any](db *gorm.DB, filter any) (*T, error) {
 }
 
 // returns empty slice if no record found
-func findMany[T any](db *gorm.DB, filter any) ([]T, error) {
-	var entities []T
+func findMany[T any](db *gorm.DB, filter any) ([]*T, error) {
+	var entities []*T
 
 	result := db.Where(filter).Find(&entities)
 

@@ -15,11 +15,11 @@ func (s *service) handleCreateEvent(payload *model.EventPayload) {
 	}
 	result, err := s.store.FindOneRoute(filter)
 	if err != nil {
-		fmt.Printf("error executing : %v", err)
+		fmt.Println("error executing : ", err)
 	}
 
 	if err := s.proxy.Create(result); err != nil {
-		fmt.Printf("error adding route : %v", err)
+		fmt.Println("error adding route : ", err)
 	}
 	fmt.Println("success : route creation")
 }

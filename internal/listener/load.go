@@ -1,8 +1,19 @@
 package listener
 
+import (
+	"fmt"
+
+	"github.com/adi-QTPi/thestral/internal/model"
+)
+
 func (s *service) Load() error {
 
-	// [TODO] bulk read and local registry sync upon startup
+	data, err := s.store.FindManyRoutes(&model.Route{})
+	if err != nil {
+		fmt.Println("Listener Loading Error: ", err)
+	}
+
+	s.proxy.BulkLoad(data)
 
 	return nil
 }

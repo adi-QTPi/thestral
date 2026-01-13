@@ -11,6 +11,7 @@ type Service interface {
 	Create(r *model.Route) error
 	Delete(host string)
 	GetHandler(host string) (*route.Handler, error)
+	BulkLoad(arr []*model.Route)
 }
 
 type service struct {

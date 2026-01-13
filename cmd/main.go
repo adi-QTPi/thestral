@@ -13,12 +13,13 @@ import (
 
 func main() {
 	initServices()
+	<-make(chan int)
 }
 
 func initServices() {
 	cfg, err := config.LoadConfig()
 	if err != nil {
-		fmt.Printf("Error initialising config : %v", err)
+		fmt.Println("Error initialising config : ", err)
 		return
 	}
 
@@ -26,7 +27,7 @@ func initServices() {
 
 	s, err := store.NewService(cfg)
 	if err != nil {
-		fmt.Printf("Error initialising db store 2: %v", err)
+		fmt.Println("Error initialising db store 2: ", err)
 		return
 	}
 
@@ -36,5 +37,5 @@ func initServices() {
 	l.Run()
 
 	go admin.InitServer(cfg, s)
-	public.InitServer(cfg, p)
+	go public.InitServer(cfg, p)
 }

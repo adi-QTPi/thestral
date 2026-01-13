@@ -20,7 +20,7 @@ func (s *service) Create(r *model.Route) error {
 	s.registry[r.Host] = routeHandler
 	s.mu.Unlock()
 
-	fmt.Printf("new route created for host : %v", r.Host)
+	fmt.Println("new route created for host : ", r.Host)
 
 	return nil
 }
@@ -46,4 +46,18 @@ func (s *service) GetHandler(host string) (*route.Handler, error) {
 	}
 
 	return handler, nil
+}
+
+// [TODO] error handling if new route handler returns error
+func (s *service) BulkLoad(arr []*model.Route) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	i := 0
+	for _, v := range arr {
+		routeHandler, _ := route.NewRouteHandler(v) // [TODO] [CRITICAL] error handling
+		s.registry[v.Host] = routeHandler
+		i++
+	}
+	fmt.Println("bulk loaded records = ", i)
 }

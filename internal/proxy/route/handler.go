@@ -1,6 +1,7 @@
 package route
 
 import (
+	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -29,6 +30,7 @@ func NewRouteHandler(route *model.Route) (*Handler, error) {
 	h := &Handler{
 		IsActive: *route.IsActive,
 		targets:  urls,
+		counter:  0,
 	}
 
 	director := func(req *http.Request) {
@@ -38,6 +40,8 @@ func NewRouteHandler(route *model.Route) (*Handler, error) {
 
 		req.Header.Set("X-Forwarded-Host", req.Host)
 		req.Header.Set("X-Forwarded-Proto", req.URL.Scheme)
+
+		log.Printf("Forwarding request %s to %s", req.URL.Path, target.Host)
 
 		req.URL.Scheme = target.Scheme
 		req.URL.Host = target.Host

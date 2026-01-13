@@ -18,7 +18,7 @@ func InitServer(cfg *config.Env, proxy proxy.Service) {
 	router.NotFound(c.handlePublicRequest)
 
 	uri := cfg.PROXY_BIND
-	log.Printf("Public Proxy listening on %s", uri)
+	log.Println("Public Proxy listening on ", uri)
 	if err := http.ListenAndServe(uri, router); err != nil {
 		log.Fatalf("public proxy server stopped: %v", err)
 	}
