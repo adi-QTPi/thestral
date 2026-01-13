@@ -9,6 +9,8 @@ import (
 func initRoutes(router *gin.Engine, m *middlewares.Service, c *controllers.Service) {
 	// [TODO] admin routes for crud
 
+	router.GET("/ping", c.Pong)
+
 	route := router.Group("/proxy")
 	{
 		route.POST("", c.CreateProxy)

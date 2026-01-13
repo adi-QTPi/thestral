@@ -1,11 +1,13 @@
-FROM golang:1.25-alpine AS builder
+FROM --platform=$BUILDPLATFORM golang:1.25-alpine AS builder
 
-ARG APP_NAME=thestral
-
-RUN apk add --no-cache git make
+# Docker fills TARGETARCH automatically
+ARG TARGETARCH
 
 ENV CGO_ENABLED=0 \
-GOOS=linux
+    GOOS=linux \
+    GOARCH=$TARGETARCH
+
+RUN apk add --no-cache git
 
 WORKDIR /app
 
@@ -14,16 +16,15 @@ RUN go mod download
 
 COPY . .
 
-RUN make build
+RUN mkdir -p bin
+RUN go build -o bin/thestral ./cmd/main.go
 
-# Running stage
 FROM alpine:latest
 
-ARG APP_NAME=thestral
-
 RUN apk --no-cache add ca-certificates
+
 WORKDIR /root/
 
-COPY --from=builder /app/bin/${APP_NAME} ./thestral
+COPY --from=builder /app/bin/thestral ./thestral
 
 CMD ["./thestral"]
