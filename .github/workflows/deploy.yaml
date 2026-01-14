@@ -1,13 +1,15 @@
-name: Build and Deploy
+name: Build and Push Docker Image
 
 on:
   push:
     branches: [ "prod" ] 
+    paths-ignore:
+      - '**.md'
 
 env:
   DOCKER_IMAGE: "adiqtpi/thestral"
   CONFIG_REPO_NAME: "adi-QTPi/rubie-homelab" 
-  CONFIG_FILE_PATH: "services/thestral/docker-compose.yaml"
+  CONFIG_FILE_PATH: "docker/services/thestral/docker-compose.yaml"
 
 jobs:
   build-push:
@@ -53,12 +55,10 @@ jobs:
 
       - name: Update Image
         run: |
-          # Use sed to replace the image tag line
           # Looks for "image: something:..." and replaces it with the new version
           sed -i 's|image: ${{ env.DOCKER_IMAGE }}:.*|image: ${{ env.DOCKER_IMAGE }}:v${{ github.run_number }}|' ${{ env.CONFIG_FILE_PATH }}
           
-          # Commit and Push the change
           git config user.name "Rubie"
           git config user.email "rubie@github.com"
-          git commit -am "[Deployment] Update Thestral's image to v${{ github.run_number }}"
+          git commit -am "[thestral] bump docker image to v${{ github.run_number }}"
           git push
