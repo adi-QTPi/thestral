@@ -55,7 +55,7 @@ func (s *service) BulkLoad(arr []*model.Route) {
 
 	i := 0
 	for _, v := range arr {
-		routeHandler, _ := route.NewRouteHandler(v) // [TODO] [CRITICAL] error handling
+		routeHandler, _ := route.NewRouteHandler(v) // [TODO] [CRITICAL] handle error handling
 		s.registry[v.Host] = routeHandler
 		i++
 	}
