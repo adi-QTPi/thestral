@@ -16,8 +16,8 @@ import (
 type Service interface {
 	Create(input dto.CreateRouteInput) error
 	Delete(input dto.DeleteRouteInput) error
-	FindOneRoute(filter *model.Route) (*model.Route, error)
-	FindManyRoutes(filter *model.Route) ([]*model.Route, error)
+	FindOneRoute(filter *model.Route) (*dto.RouteDisplay, error)
+	FindManyRoutes(filter *model.Route) ([]*dto.RouteDisplay, error)
 }
 
 const NotifyQuery = "SELECT pg_notify(?, ?)"

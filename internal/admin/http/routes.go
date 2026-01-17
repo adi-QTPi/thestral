@@ -13,6 +13,7 @@ func initRoutes(router *gin.Engine, m *middlewares.Service, c *controllers.Servi
 
 	route := router.Group("/proxy")
 	{
+		route.GET("", c.GetAllProxies)
 		route.POST("", c.CreateProxy)
 		route.DELETE("", c.DeleteProxy)
 	}

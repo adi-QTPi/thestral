@@ -14,7 +14,10 @@ var (
 // returns error if record does not exist
 func findOne[T any](db *gorm.DB, filter any) (*T, error) {
 	var entity T
-	result := db.Where(filter).First(&entity)
+
+	query := db.Where(filter)
+
+	result := query.First(&entity)
 
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -30,7 +33,9 @@ func findOne[T any](db *gorm.DB, filter any) (*T, error) {
 func findMany[T any](db *gorm.DB, filter any) ([]*T, error) {
 	var entities []*T
 
-	result := db.Where(filter).Find(&entities)
+	query := db.Where(filter)
+
+	result := query.Find(&entities)
 
 	if result.Error != nil {
 		return nil, result.Error
