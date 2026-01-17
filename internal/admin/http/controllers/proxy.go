@@ -36,3 +36,14 @@ func (s *Service) DeleteProxy(c *gin.Context) {
 
 	s.response.Success(c, "Proxy Deleted", nil)
 }
+
+func (s *Service) GetAllProxies(c *gin.Context) {
+
+	data, err := s.store.FindManyRoutes(nil)
+	if err != nil {
+		s.response.BadRequest(c, err.Error(), err)
+		return
+	}
+
+	s.response.Success(c, "All proxies", data)
+}

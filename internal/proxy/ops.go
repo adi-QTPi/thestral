@@ -4,12 +4,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/adi-QTPi/thestral/internal/model"
+	"github.com/adi-QTPi/thestral/internal/admin/dto"
 	"github.com/adi-QTPi/thestral/internal/proxy/route"
 )
 
 // creates a cached entry for one route (over writes any previous host - targets mapping)
-func (s *service) Create(r *model.Route) error {
+func (s *service) Create(r *dto.RouteDisplay) error {
 
 	routeHandler, err := route.NewRouteHandler(r)
 	if err != nil {
@@ -49,7 +49,7 @@ func (s *service) GetHandler(host string) (*route.Handler, error) {
 }
 
 // [TODO] error handling if new route handler returns error
-func (s *service) BulkLoad(arr []*model.Route) {
+func (s *service) BulkLoad(arr []*dto.RouteDisplay) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 

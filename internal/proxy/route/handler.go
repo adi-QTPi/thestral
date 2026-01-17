@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"sync/atomic"
 
-	"github.com/adi-QTPi/thestral/internal/model"
+	"github.com/adi-QTPi/thestral/internal/admin/dto"
 )
 
 type Handler struct {
@@ -17,7 +17,7 @@ type Handler struct {
 	counter  uint64
 }
 
-func NewRouteHandler(route *model.Route) (*Handler, error) {
+func NewRouteHandler(route *dto.RouteDisplay) (*Handler, error) {
 	var urls []*url.URL
 	for _, t := range route.Targets {
 		u, err := url.Parse(t)
