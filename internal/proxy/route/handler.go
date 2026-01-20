@@ -8,6 +8,7 @@ import (
 	"sync/atomic"
 
 	"github.com/adi-QTPi/thestral/internal/admin/dto"
+	"github.com/adi-QTPi/thestral/internal/utils"
 )
 
 type Handler struct {
@@ -46,6 +47,11 @@ func NewRouteHandler(route *dto.RouteDisplay) (*Handler, error) {
 		req.URL.Scheme = target.Scheme
 		req.URL.Host = target.Host
 		req.Host = target.Host
+		targetPath := target.Path
+		if targetPath == "" {
+			targetPath = "/"
+		}
+		req.URL.Path = utils.SingleJoiningSlash(targetPath, req.URL.Path)
 	}
 
 	h.proxy = &httputil.ReverseProxy{Director: director}
