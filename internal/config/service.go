@@ -13,7 +13,6 @@ const (
 	DefaultAdminBind    = "0.0.0.0:7007"
 	DefaultProxyBind    = "0.0.0.0:80"
 	DefaultProxySSLBind = "0.0.0.0:443"
-	DefaultHostName     = "karma.run.place"
 	DefaultDatabaseURL  = "host=azkaban user=user password=password dbname=thestral port=5433 sslmode=disable TimeZone=UTC"
 	DefaultDebug        = false
 )
@@ -22,7 +21,6 @@ type Env struct {
 	PROXY_BIND     string `validate:"required,hostname_port"`
 	PROXY_SSL_BIND string `validate:"required,hostname_port"`
 	ADMIN_BIND     string `validate:"required,hostname_port"`
-	HOST_DOMAIN    string `validate:"required,fqdn"`
 	DATABASE_URL   string `validate:"required"`
 	DEBUG          bool   `validate:"required"`
 }
@@ -39,7 +37,6 @@ func LoadConfig() (*Env, error) {
 		PROXY_SSL_BIND: getEnvString("PROXY_SSL_BIND", DefaultProxySSLBind),
 		ADMIN_BIND:     getEnvString("ADMIN_BIND", DefaultAdminBind),
 		DATABASE_URL:   getEnvString("DATABASE_URL", DefaultDatabaseURL),
-		HOST_DOMAIN:    getEnvString("HOST_DOMAIN", DefaultHostName),
 		DEBUG:          getEnvBool("DEBUG", DefaultDebug),
 	}
 
