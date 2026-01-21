@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"crypto/tls"
 	"log"
 	"net/http"
@@ -19,9 +20,16 @@ func InitServer(cfg *config.Env, proxy proxy.Service) {
 
 	router.NotFound(c.handlePublicRequest)
 
+	hostPolicy := func(ctx context.Context, host string) error {
+		if _, err := proxy.GetHandler(host); err != nil {
+			return err
+		}
+		return nil
+	}
+
 	certManager := &autocert.Manager{
 		Prompt:     autocert.AcceptTOS,
-		HostPolicy: autocert.HostWhitelist(cfg.HOST_DOMAIN),
+		HostPolicy: hostPolicy,
 		Cache:      autocert.DirCache("certs"),
 	}
 
