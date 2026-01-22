@@ -51,6 +51,9 @@ services:
 
       - GIN_MODE=${GIN_MODE:-release} 
       - DEBUG=${DEBUG:-false}
+      - ENABLE_TLS=${ENABLE_TLS:-false}
+      - RATE_LIMIT_REQ_PER_SEC=${RATE_LIMIT_REQ_PER_SEC:-1}
+      - RATE_LIMIT_BURST=${RATE_LIMIT_BURST:-5}
 
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://${ADMIN_BIND}/ping"]

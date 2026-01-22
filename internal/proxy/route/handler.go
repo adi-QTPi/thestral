@@ -39,10 +39,11 @@ func NewRouteHandler(route *dto.RouteDisplay) (*Handler, error) {
 		idx := atomic.AddUint64(&h.counter, 1) % uint64(len(h.targets))
 		target := h.targets[idx]
 
+		clientIP := utils.GetRealIP(req)
+		log.Printf("[proxying] IP: [%s] -> %s to %s", clientIP, req.URL.Path, target.Host)
+
 		req.Header.Set("X-Forwarded-Host", req.Host)
 		req.Header.Set("X-Forwarded-Proto", req.URL.Scheme)
-
-		log.Printf("Forwarding request %s to %s", req.URL.Path, target.Host)
 
 		req.URL.Scheme = target.Scheme
 		req.URL.Host = target.Host

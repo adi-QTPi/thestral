@@ -16,9 +16,19 @@ import (
 func InitServer(cfg *config.Env, proxy proxy.Service) {
 	router := newRouter()
 
-	c := newProxyController(proxy)
+	c := newProxyController(proxy, cfg.RATE_LIMIT_REQ_PER_SEC, cfg.RATE_LIMIT_BURST) // 1 req/sec and burst of 5 by default
 
-	router.NotFound(c.handlePublicRequest)
+	router.NotFound(c.handlePublicRequest) // NotFound in chi lies outside the middleware chain, thus rate limitting is implemented inside the controller itself
+
+	if !cfg.ENABLE_TLS {
+		log.Println("Disabling TLS")
+		log.Printf("Listening on HTTP %s", cfg.PROXY_BIND)
+
+		if err := http.ListenAndServe(cfg.PROXY_BIND, router); err != nil {
+			log.Fatalf("Dev server failed: %v", err)
+		}
+		return
+	}
 
 	hostPolicy := func(ctx context.Context, host string) error {
 		if _, err := proxy.GetHandler(host); err != nil {
