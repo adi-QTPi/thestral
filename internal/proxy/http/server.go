@@ -43,13 +43,13 @@ func InitServer(cfg *config.Env, proxy proxy.Service) {
 		Cache:      autocert.DirCache("certs"),
 	}
 
+	tlsConfig := certManager.TLSConfig()
+	tlsConfig.MinVersion = tls.VersionTLS12
+
 	httpsServer := &http.Server{
-		Addr:    cfg.PROXY_SSL_BIND,
-		Handler: router,
-		TLSConfig: &tls.Config{
-			GetCertificate: certManager.GetCertificate,
-			MinVersion:     tls.VersionTLS12,
-		},
+		Addr:      cfg.PROXY_SSL_BIND,
+		Handler:   router,
+		TLSConfig: tlsConfig,
 	}
 
 	// Challenge Handler on HTTP for lets encrypt management
