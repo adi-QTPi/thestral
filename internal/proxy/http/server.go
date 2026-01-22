@@ -39,6 +39,7 @@ func InitServer(cfg *config.Env, proxy proxy.Service) {
 		TLSConfig: &tls.Config{
 			GetCertificate: certManager.GetCertificate,
 			MinVersion:     tls.VersionTLS12,
+			NextProtos:     []string{"http/1.1"},
 		},
 	}
 
