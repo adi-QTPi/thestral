@@ -42,12 +42,12 @@ func NewRouteHandler(route *dto.RouteDisplay) (*Handler, error) {
 		clientIP := utils.GetRealIP(req)
 		log.Printf("[proxying] IP: [%s] -> %s to %s", clientIP, req.URL.Path, target.Host)
 
-		req.Header.Set("X-Forwarded-Host", req.Host)
-		req.Header.Set("X-Forwarded-Proto", req.URL.Scheme)
+		// req.Header.Set("X-Forwarded-Host", req.Host)
+		// req.Header.Set("X-Forwarded-Proto", req.URL.Scheme)
 
 		req.URL.Scheme = target.Scheme
 		req.URL.Host = target.Host
-		req.Host = target.Host
+
 		targetPath := target.Path
 		if targetPath == "" {
 			targetPath = "/"
