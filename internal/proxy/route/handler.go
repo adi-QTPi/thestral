@@ -51,6 +51,8 @@ func NewRouteHandler(route *dto.RouteDisplay) (*Handler, error) {
 		req.URL.Scheme = target.Scheme
 		req.URL.Host = target.Host
 
+		req.Host = originalHost
+
 		targetPath := target.Path
 		if targetPath == "" {
 			targetPath = "/"
